@@ -1,0 +1,23 @@
+{
+  "name": "widgets-pack",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite build --watch",
+    "build": "vite build"
+  },
+  "dependencies": {
+    "@tauri-apps/api": "2.0.2",
+    "lucide-react": "^0.577.0",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4",
+    "zebar": "^3.3.1"
+  },
+  "devDependencies": {
+    "@tailwindcss/vite": "^4.2.1",
+    "@vitejs/plugin-react": "^6.0.0",
+    "tailwindcss": "^4.2.1",
+    "vite": "^8.0.0"
+  }
+}

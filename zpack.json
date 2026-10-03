@@ -1,0 +1,668 @@
+{
+  "$schema": "https://github.com/glzr-io/zebar/raw/v3.0.0/resources/zpack-schema.json",
+  "name": "widgets-pack",
+  "version": "0.1.0",
+  "description": "Thirteen Braun-inspired desktop widgets: clock, weather, radio, calendar, world clock, stocks, sticky notes, convert, calculator, mesh, flight tracker, translator, and photo gallery.",
+  "tags": [
+    "widgets",
+    "clock",
+    "weather",
+    "radio",
+    "calendar",
+    "braun"
+  ],
+  "previewImages": [],
+  "repositoryUrl": "https://github.com/maxhayim/widgets-pack",
+  "widgets": [
+    {
+      "name": "clock",
+      "htmlPath": "./dist/clock/index.html",
+      "zOrder": "normal",
+      "shownInTaskbar": false,
+      "focused": false,
+      "resizable": false,
+      "transparent": true,
+      "includeFiles": [
+        "dist/**"
+      ],
+      "caching": {
+        "defaultDuration": 604800,
+        "rules": []
+      },
+      "privileges": {
+        "shellCommands": [
+          {
+            "program": "open",
+            "argsRegex": "^https://[^\\s\"']+$"
+          },
+          {
+            "program": "xdg-open",
+            "argsRegex": "^https://[^\\s\"']+$"
+          },
+          {
+            "program": "explorer",
+            "argsRegex": "^https://[^\\s\"']+$"
+          }
+        ]
+      },
+      "presets": [
+        {
+          "name": "default",
+          "anchor": "top_right",
+          "offsetX": "-16px",
+          "offsetY": "48px",
+          "width": "220px",
+          "height": "220px",
+          "monitorSelection": {
+            "type": "primary"
+          },
+          "dockToEdge": {
+            "enabled": false,
+            "edge": null,
+            "windowMargin": "0px"
+          }
+        }
+      ]
+    },
+    {
+      "name": "weather",
+      "htmlPath": "./dist/weather/index.html",
+      "zOrder": "normal",
+      "shownInTaskbar": false,
+      "focused": false,
+      "resizable": false,
+      "transparent": true,
+      "includeFiles": [
+        "dist/**"
+      ],
+      "caching": {
+        "defaultDuration": 604800,
+        "rules": []
+      },
+      "privileges": {
+        "shellCommands": [
+          {
+            "program": "open",
+            "argsRegex": "^https://[^\\s\"']+$"
+          },
+          {
+            "program": "xdg-open",
+            "argsRegex": "^https://[^\\s\"']+$"
+          },
+          {
+            "program": "explorer",
+            "argsRegex": "^https://[^\\s\"']+$"
+          }
+        ]
+      },
+      "presets": [
+        {
+          "name": "default",
+          "anchor": "top_right",
+          "offsetX": "-16px",
+          "offsetY": "288px",
+          "width": "220px",
+          "height": "260px",
+          "monitorSelection": {
+            "type": "primary"
+          },
+          "dockToEdge": {
+            "enabled": false,
+            "edge": null,
+            "windowMargin": "0px"
+          }
+        }
+      ]
+    },
+    {
+      "name": "radio",
+      "htmlPath": "./dist/radio/index.html",
+      "zOrder": "normal",
+      "shownInTaskbar": false,
+      "focused": false,
+      "resizable": false,
+      "transparent": true,
+      "includeFiles": [
+        "dist/**"
+      ],
+      "caching": {
+        "defaultDuration": 604800,
+        "rules": []
+      },
+      "privileges": {
+        "shellCommands": [
+          {
+            "program": "open",
+            "argsRegex": "^https://[^\\s\"']+$"
+          },
+          {
+            "program": "xdg-open",
+            "argsRegex": "^https://[^\\s\"']+$"
+          },
+          {
+            "program": "explorer",
+            "argsRegex": "^https://[^\\s\"']+$"
+          }
+        ]
+      },
+      "presets": [
+        {
+          "name": "default",
+          "anchor": "top_right",
+          "offsetX": "-16px",
+          "offsetY": "560px",
+          "width": "220px",
+          "height": "280px",
+          "monitorSelection": {
+            "type": "primary"
+          },
+          "dockToEdge": {
+            "enabled": false,
+            "edge": null,
+            "windowMargin": "0px"
+          }
+        }
+      ]
+    },
+    {
+      "name": "calendar",
+      "htmlPath": "./dist/calendar/index.html",
+      "zOrder": "normal",
+      "shownInTaskbar": false,
+      "focused": false,
+      "resizable": false,
+      "transparent": true,
+      "includeFiles": [
+        "dist/**"
+      ],
+      "caching": {
+        "defaultDuration": 604800,
+        "rules": []
+      },
+      "privileges": {
+        "shellCommands": [
+          {
+            "program": "open",
+            "argsRegex": "^https://[^\\s\"']+$"
+          },
+          {
+            "program": "xdg-open",
+            "argsRegex": "^https://[^\\s\"']+$"
+          },
+          {
+            "program": "explorer",
+            "argsRegex": "^https://[^\\s\"']+$"
+          }
+        ]
+      },
+      "presets": [
+        {
+          "name": "default",
+          "anchor": "top_right",
+          "offsetX": "-240px",
+          "offsetY": "48px",
+          "width": "220px",
+          "height": "240px",
+          "monitorSelection": {
+            "type": "primary"
+          },
+          "dockToEdge": {
+            "enabled": false,
+            "edge": null,
+            "windowMargin": "0px"
+          }
+        }
+      ]
+    },
+    {
+      "name": "world-clock",
+      "htmlPath": "./dist/world-clock/index.html",
+      "zOrder": "normal",
+      "shownInTaskbar": false,
+      "focused": false,
+      "resizable": false,
+      "transparent": true,
+      "includeFiles": [
+        "dist/**"
+      ],
+      "caching": {
+        "defaultDuration": 604800,
+        "rules": []
+      },
+      "privileges": {
+        "shellCommands": [
+          {
+            "program": "open",
+            "argsRegex": "^https://[^\\s\"']+$"
+          },
+          {
+            "program": "xdg-open",
+            "argsRegex": "^https://[^\\s\"']+$"
+          },
+          {
+            "program": "explorer",
+            "argsRegex": "^https://[^\\s\"']+$"
+          }
+        ]
+      },
+      "presets": [
+        {
+          "name": "default",
+          "anchor": "top_right",
+          "offsetX": "-240px",
+          "offsetY": "288px",
+          "width": "220px",
+          "height": "180px",
+          "monitorSelection": {
+            "type": "primary"
+          },
+          "dockToEdge": {
+            "enabled": false,
+            "edge": null,
+            "windowMargin": "0px"
+          }
+        }
+      ]
+    },
+    {
+      "name": "stocks",
+      "htmlPath": "./dist/stocks/index.html",
+      "zOrder": "normal",
+      "shownInTaskbar": false,
+      "focused": false,
+      "resizable": false,
+      "transparent": true,
+      "includeFiles": [
+        "dist/**"
+      ],
+      "caching": {
+        "defaultDuration": 604800,
+        "rules": []
+      },
+      "privileges": {
+        "shellCommands": [
+          {
+            "program": "open",
+            "argsRegex": "^https://[^\\s\"']+$"
+          },
+          {
+            "program": "xdg-open",
+            "argsRegex": "^https://[^\\s\"']+$"
+          },
+          {
+            "program": "explorer",
+            "argsRegex": "^https://[^\\s\"']+$"
+          }
+        ]
+      },
+      "presets": [
+        {
+          "name": "default",
+          "anchor": "top_right",
+          "offsetX": "-240px",
+          "offsetY": "480px",
+          "width": "220px",
+          "height": "250px",
+          "monitorSelection": {
+            "type": "primary"
+          },
+          "dockToEdge": {
+            "enabled": false,
+            "edge": null,
+            "windowMargin": "0px"
+          }
+        }
+      ]
+    },
+    {
+      "name": "sticky-notes",
+      "htmlPath": "./dist/sticky-notes/index.html",
+      "zOrder": "normal",
+      "shownInTaskbar": false,
+      "focused": false,
+      "resizable": false,
+      "transparent": true,
+      "includeFiles": [
+        "dist/**"
+      ],
+      "caching": {
+        "defaultDuration": 604800,
+        "rules": []
+      },
+      "privileges": {
+        "shellCommands": [
+          {
+            "program": "open",
+            "argsRegex": "^https://[^\\s\"']+$"
+          },
+          {
+            "program": "xdg-open",
+            "argsRegex": "^https://[^\\s\"']+$"
+          },
+          {
+            "program": "explorer",
+            "argsRegex": "^https://[^\\s\"']+$"
+          }
+        ]
+      },
+      "presets": [
+        {
+          "name": "default",
+          "anchor": "top_right",
+          "offsetX": "-464px",
+          "offsetY": "48px",
+          "width": "220px",
+          "height": "240px",
+          "monitorSelection": {
+            "type": "primary"
+          },
+          "dockToEdge": {
+            "enabled": false,
+            "edge": null,
+            "windowMargin": "0px"
+          }
+        }
+      ]
+    },
+    {
+      "name": "convert",
+      "htmlPath": "./dist/convert/index.html",
+      "zOrder": "normal",
+      "shownInTaskbar": false,
+      "focused": false,
+      "resizable": false,
+      "transparent": true,
+      "includeFiles": [
+        "dist/**"
+      ],
+      "caching": {
+        "defaultDuration": 604800,
+        "rules": []
+      },
+      "privileges": {
+        "shellCommands": [
+          {
+            "program": "open",
+            "argsRegex": "^https://[^\\s\"']+$"
+          },
+          {
+            "program": "xdg-open",
+            "argsRegex": "^https://[^\\s\"']+$"
+          },
+          {
+            "program": "explorer",
+            "argsRegex": "^https://[^\\s\"']+$"
+          }
+        ]
+      },
+      "presets": [
+        {
+          "name": "default",
+          "anchor": "top_right",
+          "offsetX": "-464px",
+          "offsetY": "304px",
+          "width": "220px",
+          "height": "210px",
+          "monitorSelection": {
+            "type": "primary"
+          },
+          "dockToEdge": {
+            "enabled": false,
+            "edge": null,
+            "windowMargin": "0px"
+          }
+        }
+      ]
+    },
+    {
+      "name": "calculator",
+      "htmlPath": "./dist/calculator/index.html",
+      "zOrder": "normal",
+      "shownInTaskbar": false,
+      "focused": false,
+      "resizable": false,
+      "transparent": true,
+      "includeFiles": [
+        "dist/**"
+      ],
+      "caching": {
+        "defaultDuration": 604800,
+        "rules": []
+      },
+      "privileges": {
+        "shellCommands": [
+          {
+            "program": "open",
+            "argsRegex": "^https://[^\\s\"']+$"
+          },
+          {
+            "program": "xdg-open",
+            "argsRegex": "^https://[^\\s\"']+$"
+          },
+          {
+            "program": "explorer",
+            "argsRegex": "^https://[^\\s\"']+$"
+          }
+        ]
+      },
+      "presets": [
+        {
+          "name": "default",
+          "anchor": "top_right",
+          "offsetX": "-464px",
+          "offsetY": "528px",
+          "width": "220px",
+          "height": "300px",
+          "monitorSelection": {
+            "type": "primary"
+          },
+          "dockToEdge": {
+            "enabled": false,
+            "edge": null,
+            "windowMargin": "0px"
+          }
+        }
+      ]
+    },
+    {
+      "name": "mesh",
+      "htmlPath": "./dist/mesh/index.html",
+      "zOrder": "normal",
+      "shownInTaskbar": false,
+      "focused": false,
+      "resizable": false,
+      "transparent": true,
+      "includeFiles": [
+        "dist/**"
+      ],
+      "caching": {
+        "defaultDuration": 604800,
+        "rules": []
+      },
+      "privileges": {
+        "shellCommands": [
+          {
+            "program": "open",
+            "argsRegex": "^https://[^\\s\"']+$"
+          },
+          {
+            "program": "xdg-open",
+            "argsRegex": "^https://[^\\s\"']+$"
+          },
+          {
+            "program": "explorer",
+            "argsRegex": "^https://[^\\s\"']+$"
+          }
+        ]
+      },
+      "presets": [
+        {
+          "name": "default",
+          "anchor": "top_right",
+          "offsetX": "-688px",
+          "offsetY": "48px",
+          "width": "220px",
+          "height": "250px",
+          "monitorSelection": {
+            "type": "primary"
+          },
+          "dockToEdge": {
+            "enabled": false,
+            "edge": null,
+            "windowMargin": "0px"
+          }
+        }
+      ]
+    },
+    {
+      "name": "flight-tracker",
+      "htmlPath": "./dist/flight-tracker/index.html",
+      "zOrder": "normal",
+      "shownInTaskbar": false,
+      "focused": false,
+      "resizable": false,
+      "transparent": true,
+      "includeFiles": [
+        "dist/**"
+      ],
+      "caching": {
+        "defaultDuration": 604800,
+        "rules": []
+      },
+      "privileges": {
+        "shellCommands": [
+          {
+            "program": "open",
+            "argsRegex": "^https://[^\\s\"']+$"
+          },
+          {
+            "program": "xdg-open",
+            "argsRegex": "^https://[^\\s\"']+$"
+          },
+          {
+            "program": "explorer",
+            "argsRegex": "^https://[^\\s\"']+$"
+          }
+        ]
+      },
+      "presets": [
+        {
+          "name": "default",
+          "anchor": "top_right",
+          "offsetX": "-688px",
+          "offsetY": "320px",
+          "width": "220px",
+          "height": "250px",
+          "monitorSelection": {
+            "type": "primary"
+          },
+          "dockToEdge": {
+            "enabled": false,
+            "edge": null,
+            "windowMargin": "0px"
+          }
+        }
+      ]
+    },
+    {
+      "name": "translator",
+      "htmlPath": "./dist/translator/index.html",
+      "zOrder": "normal",
+      "shownInTaskbar": false,
+      "focused": false,
+      "resizable": false,
+      "transparent": true,
+      "includeFiles": [
+        "dist/**"
+      ],
+      "caching": {
+        "defaultDuration": 604800,
+        "rules": []
+      },
+      "privileges": {
+        "shellCommands": [
+          {
+            "program": "open",
+            "argsRegex": "^https://[^\\s\"']+$"
+          },
+          {
+            "program": "xdg-open",
+            "argsRegex": "^https://[^\\s\"']+$"
+          },
+          {
+            "program": "explorer",
+            "argsRegex": "^https://[^\\s\"']+$"
+          }
+        ]
+      },
+      "presets": [
+        {
+          "name": "default",
+          "anchor": "top_right",
+          "offsetX": "-688px",
+          "offsetY": "592px",
+          "width": "220px",
+          "height": "240px",
+          "monitorSelection": {
+            "type": "primary"
+          },
+          "dockToEdge": {
+            "enabled": false,
+            "edge": null,
+            "windowMargin": "0px"
+          }
+        }
+      ]
+    },
+    {
+      "name": "photo-gallery",
+      "htmlPath": "./dist/photo-gallery/index.html",
+      "zOrder": "normal",
+      "shownInTaskbar": false,
+      "focused": false,
+      "resizable": false,
+      "transparent": true,
+      "includeFiles": [
+        "dist/**"
+      ],
+      "caching": {
+        "defaultDuration": 604800,
+        "rules": []
+      },
+      "privileges": {
+        "shellCommands": [
+          {
+            "program": "open",
+            "argsRegex": "^https://[^\\s\"']+$"
+          },
+          {
+            "program": "xdg-open",
+            "argsRegex": "^https://[^\\s\"']+$"
+          },
+          {
+            "program": "explorer",
+            "argsRegex": "^https://[^\\s\"']+$"
+          }
+        ]
+      },
+      "presets": [
+        {
+          "name": "default",
+          "anchor": "top_right",
+          "offsetX": "-912px",
+          "offsetY": "48px",
+          "width": "220px",
+          "height": "220px",
+          "monitorSelection": {
+            "type": "primary"
+          },
+          "dockToEdge": {
+            "enabled": false,
+            "edge": null,
+            "windowMargin": "0px"
+          }
+        }
+      ]
+    }
+  ]
+}

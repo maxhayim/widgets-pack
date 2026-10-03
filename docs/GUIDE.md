@@ -1,33 +1,43 @@
-# Widgets Pack — shared guide
+# Widgets Pack — developer guide
 
-The Widgets Pack is **one repo holding every widget**. Each widget is a small cross-platform desktop widget for Windows, macOS, and Linux, spun off from the desktop on [maxhayim.com](https://maxhayim.com) (GitHub `maxhayim/maxhayim.github.io`).
+The pack is one [Zebar](https://github.com/glzr-io/zebar) widget pack (`zpack.json` at the repo root) holding every widget. Zebar is a free, open-source host for desktop widgets on Windows, macOS, and Linux; each widget is a small frameless, transparent window running a web page.
 
-The owner is Max Hayim (GitHub `maxhayim`). Each widget has its own folder, `widgets/<name>/`, with its brief in `HANDOFF.md`. Shared across all widgets:
-- this guide (`docs/GUIDE.md`)
-- the site's source at v2.16.3 (commit 2f12bef): [`App.jsx`](https://github.com/maxhayim/maxhayim.github.io/blob/2f12befddf1075111af43c3fd26b4b7c261df78b/src/App.jsx) and [`index.css`](https://github.com/maxhayim/maxhayim.github.io/blob/2f12befddf1075111af43c3fd26b4b7c261df78b/src/index.css). Each brief names the functions to search for.
+The widgets started as the desktop widgets on [maxhayim.com](https://maxhayim.com). Their original code is the site's source at v2.16.3 (commit 2f12bef): [`App.jsx`](https://github.com/maxhayim/maxhayim.github.io/blob/2f12befddf1075111af43c3fd26b4b7c261df78b/src/App.jsx) and [`index.css`](https://github.com/maxhayim/maxhayim.github.io/blob/2f12befddf1075111af43c3fd26b4b7c261df78b/src/index.css).
 
-## Platform: confirm with Max in the first project
+## Layout
 
-Max asked for "whatever cross-platform is popular now". The recommendation is **Tauri 2**:
-- The widgets are already React plus CSS, and Tauri runs that code as native windows on Windows, macOS, and Linux.
-- Apps are small (about 10 MB, versus 100+ MB with Electron).
-- Tauri windows can be frameless, transparent, pinned to the desktop layer, and remembered per monitor.
-- The native widget systems (macOS WidgetKit, the Windows 11 Widgets board, KDE Plasma) are each tied to one platform and can't run this web code.
+```
+zpack.json            the 13 widgets: window options, default placement, allowed programs
+widgets/<name>/       index.html + main.jsx: one widget
+src/shared/
+  shell.jsx           the frame: drag, settings side, window fitting, shared settings
+  desktop.js          everything that talks to Zebar and the window (safe outside Zebar)
+  store.js            settings storage and the shared settings
+  time.jsx            time zones, formatting, the small analog clock
+  theme.css           the look: tokens, every widget's styles, Tailwind
+dist/                 the build Zebar runs (committed)
+```
 
-Each widget becomes one small app: a frameless widget window, plus a tray or menu-bar icon with Settings, Always on top, and Quit. Once the first widget is built, reuse its setup for the rest: share the Tauri config, the look-and-feel CSS, and helpers across `widgets/` instead of copying them.
+Stack: React 19, Tailwind 4, lucide-react, built by Vite into `dist/<name>/index.html`. A widget is `mountWidget({ id, label, Widget, Settings })`; `Settings` is optional and appears above the shared settings.
 
-## Look and feel, shared by every widget
+## How the frame works
 
-The design is Braun-inspired: rounded 26px cases, 196px wide, warm off-whites in light mode and warm near-blacks in dark mode, with an orange accent. The tokens are the `--os-*` variables (`:root` and the dark-mode blocks) and `--w-*` (on `.widget`) in the site's `index.css`; the widget styles are under `/* ---------- Widgets:` and the following blocks. Follow the OS light/dark setting.
+- **Window size:** a `ResizeObserver` on the widget sets the window to exactly its size (plus 12px around for the shadow). `zpack.json` heights are only a first guess.
+- **Drag:** Zebar widgets can't use Tauri's built-in window drag, so a pointer drag moves the window with `setPosition`. A press that moves less than 4px stays a click. On release it snaps to 16px and is kept on its monitor, and the spot is saved per monitor layout.
+- **Settings side:** gear on hover or right-click. The widget stays mounted underneath, so a playing radio keeps playing.
+- **Layer:** `setZOrder` with `normal`, `top_most`, or `bottom_most`, saved per widget.
+- **Links:** `openUrl` runs `open` (macOS), `xdg-open` (Linux), or `explorer` (Windows) through Zebar's `shellExec`. `zpack.json` allows only those programs, and only with a single https URL.
+- **Storage:** Zebar gives each pack its own browser storage, served from `http://127.0.0.1:6124`. Keys are prefixed `widgets-pack:`. Photos are in IndexedDB (`widgets-pack-photos`).
+- **Location:** the weather's "near me" uses Zebar's `ip` provider (city level, no permission prompt) instead of browser geolocation, which web views often don't offer.
 
-## What changes when leaving the website
+## Adding a widget
 
-- **Preferences:** the site's `usePrefs` / `readPrefs` save to browser cookies. Use Tauri's store plugin instead. Keep API keys in the OS keychain, not in plain files.
-- **Clicks that open System Preferences** (`openPreferences(...)`): replace with the widget's own settings window.
-- **Language and clock:** widgets read the site's Language and Date & Time prefs (`REGION_PREFS`, `TIME_PREFS`, `formatTime`, `clockParts`). Use the OS locale and the OS 12/24-hour setting instead, with an override in settings.
-- **Network:** browsers block sites from calling many data services (CORS). A Tauri app can make requests from its Rust side, where that limit doesn't apply. That opens up data the site couldn't use. Check each service's terms first, and never get around a service that deliberately blocks other apps (for example by stripping referrers).
-- **Drag:** each widget is a whole window that the user drags. Snap it to a 16px grid and keep it fully on screen (as on the site since v2.15), and remember the position per monitor.
+1. Make `widgets/<name>/index.html` (copy one) and `main.jsx`.
+2. Add it to `zpack.json`.
+3. `npm run build`, commit, and reload Zebar's widget packs.
+
+Keep to the look: 196px wide, 26px corners, `--os-*` and `--w-*` tokens from `theme.css`, light and dark both. Before adding a radio station, check it plays in an `<audio>` element from a normal web page and that the broadcaster allows playback from other sites. Never work around a service that deliberately blocks other sites.
 
 ## Releases
 
-Follow the site's habits: semver GitHub releases with plain-language notes written from the actual changes, with installers attached per OS (`.dmg`, `.msi` or `.exe`, and `.AppImage` or `.deb`). Each widget still ships as its own app with its own installers; tag releases per widget (for example `clock-v1.0.0`) or for the whole pack, to be decided with Max. Ship unsigned: Max does not pay for Apple notarization or Windows code signing. Ask Max about the repo's visibility and the license before the first public release.
+Semver, in `package.json` and `zpack.json`. Write plain-language release notes from the actual changes. The pack can also be published to Zebar's marketplace with `zebar publish` (free, needs a glzr.io API token).
