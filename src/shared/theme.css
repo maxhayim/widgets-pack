@@ -205,9 +205,8 @@ button { cursor: default; }
   text-transform: uppercase;
   color: var(--os-ink-3);
   opacity: 0;
-  transition: opacity 0.15s;
 }
-.widget:hover .widget-credit,
+.wp-active .widget-credit,
 .widget-credit:focus-visible { opacity: 0.8; }
 .widget-weather { padding-bottom: 16px; }
 
@@ -296,7 +295,7 @@ button { cursor: default; }
 
 /* ---------- Widgets Pack additions ---------- */
 
-/* Settings: the back of the widget, opened with the gear (shown on hover) or a right-click */
+/* Settings: the back of the widget, opened with the gear (shown while the widget is active) or a right-click */
 .wp-gear {
   position: absolute;
   left: 10px;
@@ -310,9 +309,8 @@ button { cursor: default; }
   border-radius: 999px;
   color: var(--os-ink-3);
   opacity: 0;
-  transition: opacity 0.15s;
 }
-.wp-frame:hover .wp-gear,
+.wp-active .wp-gear,
 .wp-gear:focus-visible { opacity: 0.85; }
 .wp-gear:hover { color: var(--os-ink); background: var(--os-hover); }
 .wp-frame:has(.widget-calc) .wp-gear { color: #b9b2a5; }
@@ -345,3 +343,14 @@ button { cursor: default; }
 .widget-photos-thumb { width: 44px; height: 44px; flex-shrink: 0; overflow: hidden; border-radius: 8px; opacity: 0.55; }
 .widget-photos-thumb:hover { opacity: 0.85; }
 .widget-photos-thumb-on { opacity: 1; box-shadow: 0 0 0 2px var(--os-accent); }
+
+/* Drop-downs look the same on every system: no native styling, a small chevron */
+select {
+  -webkit-appearance: none;
+  appearance: none;
+  padding-right: 18px !important;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='5' viewBox='0 0 8 5'%3E%3Cpath d='M1 1l3 3 3-3' fill='none' stroke='%2386837c' stroke-width='1.3' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 6px center;
+  text-overflow: ellipsis;
+}

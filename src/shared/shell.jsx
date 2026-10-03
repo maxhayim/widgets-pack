@@ -8,6 +8,21 @@ import "./theme.css";
 /* The frame every widget sits in: drag it anywhere (it snaps to a 16px grid and stays on screen), and the gear
    (on hover) or a right-click turns it around to its settings. The window always fits the widget exactly. */
 
+// Zebar adds its own normalize.css to every widget. It isn't in a cascade layer, so it would override Tailwind's
+// utilities (font sizes on buttons and inputs); Tailwind's preflight already does the same job, so it's dropped.
+function dropZebarNormalize() {
+  document.querySelectorAll('link[data-zebar][href*="normalize"]').forEach((link) => link.remove());
+}
+dropZebarNormalize();
+new MutationObserver(dropZebarNormalize).observe(document.documentElement, { childList: true, subtree: true });
+
+// The gear and credits show while the widget is the active window (after a click on it). Hover isn't used:
+// WebKit can report :hover and pointer moves in widget windows the pointer never entered.
+const setActive = (on) => document.documentElement.classList.toggle("wp-active", on);
+setActive(document.hasFocus());
+window.addEventListener("focus", () => setActive(true));
+window.addEventListener("blur", () => setActive(false));
+
 // Elements that keep their own clicks instead of starting a drag
 const INTERACTIVE = "button, a, input, select, textarea, label, [contenteditable], [data-nodrag]";
 
@@ -142,7 +157,7 @@ function Frame({ id, label, Widget, Settings }) {
         {settingsOpen ? (
           <SettingsPanel name={name} label={label} Settings={Settings} close={() => setSettingsOpen(false)} />
         ) : (
-          <button type="button" className="wp-gear" onClick={() => setSettingsOpen(true)} aria-label={`${label} settings`} title="Settings (or right-click)">
+          <button type="button" className="wp-gear" onClick={() => setSettingsOpen(true)} aria-label={`${label} settings`} title="Settings (or right-click the widget)">
             <Gear className="h-3 w-3" strokeWidth={2} aria-hidden="true" />
           </button>
         )}
