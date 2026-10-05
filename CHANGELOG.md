@@ -2,6 +2,12 @@
 
 All notable changes to Widgets Pack are documented here.
 
+## [1.4.1] - 2026-10-05
+
+### Added
+- **Radio controls for web pages:** `useRadio()` (`{ status, stream }`), `stopRadio()`, and `toggleRadio()`. The radio keeps playing when its widget is unmounted, so a page can now stop it from outside: a keyboard shortcut, its own music player starting, another user signing in, or the Radio widget being removed. `toggleRadio()` turns it on with the mounted Radio widget's station.
+- **Host time zone:** `useShared()` can carry an optional `timeZone` (an IANA zone or `"auto"`), and the Clock's "automatic" time zone follows it. Zebar's shared settings have none, so the Zebar Clock is unchanged.
+
 ## [1.4.0] - 2026-10-05
 
 ### Added

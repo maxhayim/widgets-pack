@@ -140,6 +140,7 @@ Then restart Zebar. Commit `dist/` and `lib/` along with your changes, since Zeb
 
 This project follows semantic versioning.
 
+- **v1.4.1** — radio controls and time zone for web pages
 - **v1.4.0** — the widgets as a library for web pages; live data and a working radio inside Zebar
 - **v1.3.0** — choose colors: the Calendar's accent and case, the Clock and World Clock second hands, and the Weather bars
 - **v1.2.0** — add your own radio streams; a name and country flag on the Clock

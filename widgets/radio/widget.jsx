@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { ExternalLink } from "../../src/shared/ui.jsx";
 import { useHost } from "../../src/shared/host.jsx";
 import { usePrefs, useStored } from "../../src/shared/store.js";
-import { play, player, setVolume, stop, usePlayer } from "./player.js";
+import { play, player, setStarter, setVolume, stop, usePlayer } from "./player.js";
 
 /* Radio: after the Braun T3 pocket radio. Perforated grille on top, a tuning wheel you turn to change stations.
    Public and listener-supported stations from around the world, plus Galgalatz and two Miami favorites. */
@@ -142,6 +142,14 @@ function RadioWidget() {
   }, [current.stream]);
 
   useEffect(() => setVolume(prefs.volume), [prefs.volume]);
+
+  // Lets a page turn the radio on from outside the widget (toggleRadio), with this widget's current station
+  useEffect(() => {
+    setStarter(start);
+    return () => {
+      if (player.start === start) setStarter(null);
+    };
+  });
 
   const statusLabel = !playing ? "off" : status === "error" ? "no signal" : status === "tuning" ? "tuning…" : "on air";
 

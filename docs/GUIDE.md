@@ -46,7 +46,7 @@ Stack: React 19, Tailwind 4, lucide-react, built by Vite: `npm run build` makes 
 The pack is also a library. Install it from a release:
 
 ```
-npm install github:maxhayim/widgets-pack#v1.4.0
+npm install github:maxhayim/widgets-pack#v1.4.1
 ```
 
 ```jsx
@@ -75,7 +75,7 @@ Everything a widget needs from where it runs comes from the host. Anything you l
 | `storage` | `{ get(key), set(key, value \| null), subscribe?(key, onChange) }`, strings by key | `localStorage`, keys prefixed `widgets-pack:` |
 | `openUrl(url)` | opens a link | https links in a new tab |
 | `locate()` | resolves to `{ name, lat, lon }` | browser geolocation, rounded to about a kilometer |
-| `useShared` | a hook returning `[{ locale, temperature, clock, theme }, update]` | the pack's own shared settings |
+| `useShared` | a hook returning `[{ locale, temperature, clock, theme, timeZone? }, update]`; `timeZone` (an IANA zone or `"auto"`) is what the Clock's "automatic" time zone follows | the pack's own shared settings |
 | `sound` | `{ attach(audio), detach(audio), openSettings?() }`; the host sets volume and mute | none: the radio's own volume slider |
 | `createAudio()` | makes the radio's audio element | `new Audio()` |
 | `photos` | `{ usePhotos(), add(files), remove(id) }` | the pack's own IndexedDB store |
@@ -83,6 +83,20 @@ Everything a widget needs from where it runs comes from the host. Anything you l
 | `origin` | the address MeshMonitor has to allow | the page's own |
 
 `useShared` and `photos.usePhotos` are hooks: pass the same function for the whole time the page is open. The radio is one player for the whole page, so it keeps playing if a widget is unmounted and mounted elsewhere.
+
+### Radio controls
+
+The radio keeps playing when its widget is unmounted, so a page can control it from outside:
+
+```jsx
+import { useRadio, stopRadio, toggleRadio } from "widgets-pack";
+
+const { status } = useRadio(); // "off" | "tuning" | "on" | "error"; also `stream`
+stopRadio();   // e.g. when your CD player starts, another user signs in, or the Radio widget is removed
+toggleRadio(); // a keyboard shortcut: on with the mounted Radio widget's station, or off
+```
+
+`toggleRadio()` can only turn the radio on while a Radio widget is mounted, since the widget knows the station and volume.
 
 ## Adding a widget
 

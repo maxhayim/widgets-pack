@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 
 /* One radio for the whole page, outside React: a web page can unmount the widget and mount it again elsewhere
    (or show it in two places) and the station keeps playing. */
-export const player = { status: "off", stream: null, audio: null, sound: null, listeners: new Set() }; // status: off | tuning | on | error
+export const player = { status: "off", stream: null, audio: null, sound: null, start: null, listeners: new Set() }; // status: off | tuning | on | error
 
 function set(patch) {
   Object.assign(player, patch);
@@ -56,4 +56,15 @@ export function stop() {
 
 export function setVolume(volume) {
   if (player.audio && !player.sound) player.audio.volume = volume / 100;
+}
+
+// The mounted Radio widget registers how to start its current station, so a page can turn it on from elsewhere
+export function setStarter(start) {
+  player.start = start;
+}
+
+// On if it's off (when a Radio widget has registered), off if it's on
+export function toggleRadio() {
+  if (player.status === "off") player.start?.();
+  else stop();
 }

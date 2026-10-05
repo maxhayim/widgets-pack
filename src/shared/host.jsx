@@ -53,7 +53,8 @@ export const browserHost = {
         { maximumAge: 30 * 60 * 1000, timeout: 10000 },
       );
     }),
-  // A hook returning [{ locale, temperature: "f"|"c", clock: "12"|"24", theme }, update(patch)], or null for the pack's own
+  // A hook returning [{ locale, temperature: "f"|"c", clock: "12"|"24", theme, timeZone? }, update(patch)], or null for the
+  // pack's own. timeZone (an IANA zone or "auto") is what the Clock's "automatic" follows.
   useShared: null,
   // Sound for the radio: { attach(audio), detach(audio), openSettings?() }. With it, the host sets volume and mute and
   // the radio's volume slider is hidden. null: the radio sets its own volume.

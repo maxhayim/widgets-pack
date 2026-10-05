@@ -18,7 +18,9 @@ function ClockWidget() {
   const [prefs] = usePrefs(CLOCK_PREFS);
   const [shared] = useShared();
   const { clockMark } = useHost();
-  const parts = clockParts(now, prefs.timeZone);
+  // "Automatic" follows the host's time zone when it has one (a web page's own setting), otherwise this computer's
+  const zone = prefs.timeZone === "auto" ? shared.timeZone || "auto" : prefs.timeZone;
+  const parts = clockParts(now, zone);
   const s = parts.s;
   const m = parts.m + s / 60;
   const h = (parts.h % 12) + m / 60;
@@ -27,7 +29,7 @@ function ClockWidget() {
   );
 
   return (
-    <section className="widget widget-clock" style={isColor(prefs.ticker) ? { "--w-yellow": prefs.ticker } : undefined} aria-label={`${prefs.name || "Clock"}: ${formatTime(now, shared, prefs.timeZone)}`}>
+    <section className="widget widget-clock" style={isColor(prefs.ticker) ? { "--w-yellow": prefs.ticker } : undefined} aria-label={`${prefs.name || "Clock"}: ${formatTime(now, shared, zone)}`}>
       <svg viewBox="0 0 200 200" className="block h-full w-full" aria-hidden="true">
         <circle cx="100" cy="100" r="90" fill="var(--w-face)" />
         {Array.from({ length: 60 }, (_, i) =>
