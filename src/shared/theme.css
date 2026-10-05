@@ -118,6 +118,8 @@ button { cursor: default; }
   color: var(--os-ink);
 }
 .widget-clock { height: 196px; padding: 6px; }
+.widget-clock-label { font-family: "Twemoji Country Flags", var(--font-sans); font-size: 8px; font-weight: 600; letter-spacing: 0.14em; fill: var(--w-mark); text-transform: uppercase; }
+.widget-clock-flag { font-family: "Twemoji Country Flags", "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif; font-size: 13px; }
 .widget-clock-num { font-size: 14px; font-weight: 500; fill: var(--w-hand); letter-spacing: -0.02em; }
 
 /* T3 grille: rows of round perforations */
@@ -354,3 +356,5 @@ select {
   background-position: right 6px center;
   text-overflow: ellipsis;
 }
+
+.wp-flag { font-family: "Twemoji Country Flags", var(--font-sans); }

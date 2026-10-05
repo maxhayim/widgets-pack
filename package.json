@@ -1,7 +1,7 @@
 {
   "name": "widgets-pack",
   "private": true,
-  "version": "1.1.0",
+  "version": "1.2.0",
   "type": "module",
   "scripts": {
     "dev": "vite build --watch",
@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "@tauri-apps/api": "2.0.2",
+    "country-flag-emoji-polyfill": "^0.1.10",
     "lucide-react": "^0.577.0",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",

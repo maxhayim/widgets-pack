@@ -2,6 +2,16 @@
 
 All notable changes to Widgets Pack are documented here.
 
+## [1.2.0] - 2026-10-05
+
+### Added
+- **Your own radio streams** (Radio settings → your stations): a name and a direct stream address. The stream is tried first; addresses that can't play (web pages, playlists, wrong hosts) are turned away. The dial holds 16 stations, and its numbers shrink to fit past 12.
+- **Clock name and flag:** an optional name (up to 18 characters) and a country flag on the face, under the 12. Flags come from a bundled Twemoji font on Windows, which has no flag emoji.
+
+### Changed
+- The Radio remembers its station by name rather than position, so adding or removing stations never changes the one playing. The station picked in v1.1.0 or earlier resets to Radio Paradise once.
+- README: data sources and design credits are listed one per line with links; "your computer" and "your MeshMonitor" link to their local addresses.
+
 ## [1.1.0] - 2026-10-05
 
 ### Added

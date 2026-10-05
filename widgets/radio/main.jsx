@@ -1,7 +1,7 @@
 import { Play, Square } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { ExternalLink, mountWidget } from "../../src/shared/shell.jsx";
-import { usePrefs } from "../../src/shared/store.js";
+import { usePrefs, useStored } from "../../src/shared/store.js";
 
 /* Radio: after the Braun T3 pocket radio. Perforated grille on top, a tuning wheel you turn to change stations.
    Public and listener-supported stations from around the world, plus Galgalatz and two Miami favorites. */
@@ -38,9 +38,60 @@ const RADIO_STATIONS = [
 ];
 const RADIO_PREFS = {
   key: "radio",
-  defaults: { station: 0, volume: 70 },
+  defaults: { station: "rp", volume: 70 }, // station is an id, so adding or removing stations never changes the one playing
 };
-const clampStation = (n) => Math.max(0, Math.min(RADIO_STATIONS.length - 1, Math.round(n) || 0));
+
+/* Your own stations, after the built-in ones. The dial has room for 16 in all. */
+const MAX_STATIONS = 16;
+const MAX_OWN = MAX_STATIONS - RADIO_STATIONS.length;
+const isStreamUrl = (url) => /^https?:\/\/[^\s"']+$/i.test(url);
+
+function cleanOwnStations(saved) {
+  return (Array.isArray(saved) ? saved : [])
+    .filter((s) => s && typeof s.id === "string" && typeof s.name === "string" && isStreamUrl(s.stream || ""))
+    .slice(0, MAX_OWN)
+    .map((s) => ({
+      id: s.id,
+      name: s.name.slice(0, 40),
+      genre: typeof s.genre === "string" && s.genre ? s.genre.slice(0, 60) : "your station",
+      stream: s.stream,
+      site: typeof s.site === "string" && /^https:\/\/[^\s"']+$/.test(s.site) ? s.site : null,
+      own: true,
+    }));
+}
+
+function useStations() {
+  const [saved, save] = useStored("radio-stations", []);
+  const own = cleanOwnStations(saved);
+  return { stations: [...RADIO_STATIONS, ...own], own, saveOwn: save };
+}
+
+// Tries a stream silently before it's added: "ok" if it starts, "bad" if the browser can't play it at all
+// (a web page, a playlist file, a wrong address), "unknown" if it doesn't answer in time
+function testStream(url) {
+  return new Promise((resolve) => {
+    const a = new Audio();
+    a.muted = true;
+    a.preload = "auto";
+    let done = false;
+    const finish = (result) => {
+      if (done) return;
+      done = true;
+      clearTimeout(timer);
+      a.pause();
+      a.removeAttribute("src");
+      a.load();
+      resolve(result);
+    };
+    const timer = setTimeout(() => finish("unknown"), 10000);
+    a.addEventListener("canplay", () => finish("ok"), { once: true });
+    a.addEventListener("playing", () => finish("ok"), { once: true });
+    a.addEventListener("error", () => finish("bad"), { once: true });
+    a.src = url;
+    // Muted playback is the surest test; if the system won't allow it, loading alone has to do
+    a.play().catch((e) => e?.name !== "NotAllowedError" && e?.name !== "AbortError" && finish("bad"));
+  });
+}
 
 // What's on now, for the stations that publish it
 function useNowPlaying(station, active) {
@@ -68,15 +119,17 @@ function useNowPlaying(station, active) {
 
 function RadioWidget() {
   const [prefs, setPrefs] = usePrefs(RADIO_PREFS);
-  const station = clampStation(prefs.station);
+  const { stations } = useStations();
+  const n = stations.length;
+  const found = stations.findIndex((s) => s.id === prefs.station);
+  const station = found >= 0 ? found : 0;
   const [status, setStatus] = useState("off"); // "off" | "tuning" | "on" | "error"
   const audioRef = useRef(null);
   const statusRef = useRef(status);
   statusRef.current = status;
-  const current = RADIO_STATIONS[station];
+  const current = stations[station];
   const playing = status !== "off";
   const track = useNowPlaying(current, status === "on");
-  const n = RADIO_STATIONS.length;
 
   const audio = () => {
     if (!audioRef.current) {
@@ -90,9 +143,9 @@ function RadioWidget() {
     return audioRef.current;
   };
 
-  const start = (index = station) => {
+  const start = (stream = current.stream) => {
     const a = audio();
-    a.src = RADIO_STATIONS[index].stream;
+    a.src = stream;
     a.volume = prefs.volume / 100;
     setStatus("tuning");
     // Tuning again before a station answers interrupts this play request; that's not a lost signal
@@ -108,14 +161,14 @@ function RadioWidget() {
     a.load();
   };
 
-  const tune = (step) => setPrefs({ station: (station + step + n) % n });
+  const tune = (step) => setPrefs({ station: stations[(station + step + n) % n].id });
 
   // A new station (from the wheel or from settings) plays right away if the radio is on
-  const tuned = useRef(station);
+  const tuned = useRef(current.stream);
   useEffect(() => {
-    if (tuned.current === station) return;
-    tuned.current = station;
-    if (statusRef.current !== "off") start(station);
+    if (tuned.current === current.stream) return;
+    tuned.current = current.stream;
+    if (statusRef.current !== "off") start(current.stream);
   });
 
   useEffect(() => {
@@ -166,13 +219,13 @@ function RadioWidget() {
               {Array.from({ length: 36 }, (_, i) => (
                 <line key={i} x1="32" y1="3" x2="32" y2="6.5" stroke="var(--w-mark)" strokeWidth="0.8" transform={`rotate(${i * 10} 32 32)`} />
               ))}
-              {RADIO_STATIONS.map((s, i) => {
+              {stations.map((s, i) => {
                 const deg = (i * 360) / n;
                 const a = deg * (Math.PI / 180);
                 const x = 32 + Math.sin(a) * 19;
                 const y = 32 - Math.cos(a) * 19;
                 return (
-                  <text key={s.id} x={x} y={y} textAnchor="middle" dominantBaseline="central" transform={`rotate(${deg} ${x} ${y})`} className="widget-radio-num">
+                  <text key={s.id} x={x} y={y} textAnchor="middle" dominantBaseline="central" transform={`rotate(${deg} ${x} ${y})`} className="widget-radio-num" style={n > 12 ? { fontSize: "6.5px" } : undefined}>
                     {i + 1}
                   </text>
                 );
@@ -194,23 +247,66 @@ function RadioWidget() {
           {playing ? <Square className="h-3.5 w-3.5" fill="currentColor" strokeWidth={0} /> : <Play className="ml-0.5 h-4 w-4" fill="currentColor" strokeWidth={0} />}
         </button>
       </div>
-      <ExternalLink href={current.site} className="widget-credit">
-        {current.name}
-      </ExternalLink>
+      {current.site && (
+        <ExternalLink href={current.site} className="widget-credit">
+          {current.name}
+        </ExternalLink>
+      )}
     </section>
   );
 }
 
 function RadioSettings() {
   const [prefs, setPrefs] = usePrefs(RADIO_PREFS);
-  const station = clampStation(prefs.station);
+  const { stations, own, saveOwn } = useStations();
+  const current = stations.some((s) => s.id === prefs.station) ? prefs.station : stations[0].id;
+  const [name, setName] = useState("");
+  const [stream, setStream] = useState("");
+  const [state, setState] = useState(null); // { kind: "testing" | "ok" | "error", text }
+
+  const add = async () => {
+    const url = stream.trim();
+    const title = name.trim();
+    if (!title || !isStreamUrl(url)) {
+      setState({ kind: "error", text: "Give it a name and a stream address starting with http:// or https://." });
+      return;
+    }
+    if (stations.some((s) => s.stream === url)) {
+      setState({ kind: "error", text: "That stream is already on the dial." });
+      return;
+    }
+    setState({ kind: "testing", text: "Tuning in…" });
+    const result = await testStream(url);
+    if (result === "bad") {
+      setState({
+        kind: "error",
+        text: "That stream didn't play. Use the direct stream address (often ending in /stream, .mp3, or .aac), not a .pls or .m3u playlist or a web page.",
+      });
+      return;
+    }
+    const id = `own-${Date.now().toString(36)}`;
+    saveOwn([...own, { id, name: title, stream: url }]);
+    setPrefs({ station: id });
+    setName("");
+    setStream("");
+    setState({
+      kind: "ok",
+      text: result === "ok" ? `Added ${title} as station ${stations.length + 1}.` : `Added ${title} as station ${stations.length + 1}. It was slow to answer, so check that it plays.`,
+    });
+  };
+
+  const remove = (id) => {
+    saveOwn(own.filter((s) => s.id !== id));
+    if (prefs.station === id) setPrefs({ station: stations[0].id });
+  };
+
   return (
     <>
       <label className="wp-field">
         station
-        <select className="wp-input" value={station} onChange={(e) => setPrefs({ station: Number(e.target.value) })}>
-          {RADIO_STATIONS.map((s, i) => (
-            <option key={s.id} value={i}>
+        <select className="wp-input" value={current} onChange={(e) => setPrefs({ station: e.target.value })}>
+          {stations.map((s, i) => (
+            <option key={s.id} value={s.id}>
               {i + 1}. {s.name}
             </option>
           ))}
@@ -220,6 +316,58 @@ function RadioSettings() {
         volume · {prefs.volume}%
         <input type="range" min="0" max="100" step="5" value={prefs.volume} onChange={(e) => setPrefs({ volume: Number(e.target.value) })} className="accent-[var(--os-accent)]" />
       </label>
+
+      <div className="wp-section grid gap-2">
+        <span className="wp-label">your stations</span>
+        {own.length > 0 && (
+          <ul className="grid gap-1">
+            {own.map((s) => (
+              <li key={s.id} className="flex items-center gap-1.5 text-[11.5px]">
+                <span className="tabular-nums text-[var(--os-ink-3)]">{stations.findIndex((x) => x.id === s.id) + 1}.</span>
+                <span className="min-w-0 flex-1 truncate" title={s.stream}>
+                  {s.name}
+                </span>
+                <button type="button" onClick={() => remove(s.id)} className="widget-mini-btn h-5 w-5" aria-label={`Remove ${s.name}`} title="Remove">
+                  ×
+                </button>
+              </li>
+            ))}
+          </ul>
+        )}
+        {own.length < MAX_OWN ? (
+          <form
+            className="grid gap-1.5"
+            onSubmit={(e) => {
+              e.preventDefault();
+              add();
+            }}
+          >
+            <input className="wp-input" value={name} onChange={(e) => setName(e.target.value.slice(0, 40))} placeholder="Name, e.g. WLRN" aria-label="Station name" />
+            <input
+              className="wp-input"
+              value={stream}
+              onChange={(e) => setStream(e.target.value)}
+              placeholder="https://…/stream"
+              aria-label="Stream address"
+              inputMode="url"
+              autoComplete="off"
+              spellCheck={false}
+            />
+            <div className="flex justify-end">
+              <button type="submit" className="wp-btn" disabled={!name.trim() || !stream.trim() || state?.kind === "testing"}>
+                {state?.kind === "testing" ? "testing…" : "add station"}
+              </button>
+            </div>
+          </form>
+        ) : (
+          <p className="text-[11px] text-[var(--os-ink-3)]">The dial is full ({MAX_STATIONS} stations). Remove one to add another.</p>
+        )}
+        {state && state.kind !== "testing" && (
+          <p className={`text-[11px] leading-snug ${state.kind === "error" ? "text-[var(--os-warn)]" : "text-[var(--os-ink-2)]"}`} aria-live="polite">
+            {state.text}
+          </p>
+        )}
+      </div>
     </>
   );
 }

@@ -1,11 +1,14 @@
+import { useMemo } from "react";
+import { countries, flagEmoji } from "../../src/shared/flags.js";
 import { Choice, mountWidget } from "../../src/shared/shell.jsx";
 import { usePrefs, useShared } from "../../src/shared/store.js";
 import { TIME_ZONES, clockParts, formatTime, useClock } from "../../src/shared/time.jsx";
 
-/* Clock: after the Braun ABW 41 wall clock. Flat black hands, yellow sweep hand with a round counterweight. */
+/* Clock: after the Braun ABW 41 wall clock. Flat black hands, yellow sweep hand with a round counterweight.
+   An optional name and country flag sit on the face, under the 12. */
 const CLOCK_PREFS = {
   key: "clock",
-  defaults: { timeZone: "auto", seconds: true },
+  defaults: { timeZone: "auto", seconds: true, name: "", flag: "" },
   allowed: { timeZone: TIME_ZONES.map((z) => z.id) },
 };
 
@@ -22,7 +25,7 @@ function ClockWidget() {
   );
 
   return (
-    <section className="widget widget-clock" aria-label={`Clock: ${formatTime(now, shared, prefs.timeZone)}`}>
+    <section className="widget widget-clock" aria-label={`${prefs.name || "Clock"}: ${formatTime(now, shared, prefs.timeZone)}`}>
       <svg viewBox="0 0 200 200" className="block h-full w-full" aria-hidden="true">
         <circle cx="100" cy="100" r="90" fill="var(--w-face)" />
         {Array.from({ length: 60 }, (_, i) =>
@@ -37,6 +40,13 @@ function ClockWidget() {
             </text>
           );
         })}
+        {(prefs.flag || prefs.name) && (
+          <text x="100" y="62" textAnchor="middle" dominantBaseline="central" className="widget-clock-label">
+            {prefs.flag && <tspan className="widget-clock-flag">{flagEmoji(prefs.flag)}</tspan>}
+            {prefs.flag && prefs.name ? " " : ""}
+            {prefs.name.slice(0, 18)}
+          </text>
+        )}
         {hand(h * 30, 46, 10, 6, "var(--w-hand)")}
         {hand(m * 6, 70, 12, 4, "var(--w-hand)")}
         {prefs.seconds && (
@@ -53,8 +63,25 @@ function ClockWidget() {
 
 function ClockSettings() {
   const [prefs, setPrefs] = usePrefs(CLOCK_PREFS);
+  const [shared] = useShared();
+  const places = useMemo(() => countries(shared.locale), [shared.locale]);
   return (
     <>
+      <label className="wp-field">
+        name on the face
+        <input className="wp-input" value={prefs.name} onChange={(e) => setPrefs({ name: e.target.value.slice(0, 18) })} placeholder="e.g. Home, Office, Mom" maxLength={18} />
+      </label>
+      <label className="wp-field">
+        flag
+        <select className="wp-input wp-flag" value={prefs.flag} onChange={(e) => setPrefs({ flag: e.target.value })}>
+          <option value="">none</option>
+          {places.map((c) => (
+            <option key={c.code} value={c.code}>
+              {flagEmoji(c.code)} {c.name}
+            </option>
+          ))}
+        </select>
+      </label>
       <label className="wp-field">
         time zone
         <select className="wp-input" value={prefs.timeZone} onChange={(e) => setPrefs({ timeZone: e.target.value })}>
