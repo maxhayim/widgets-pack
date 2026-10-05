@@ -40,4 +40,4 @@ Keep to the look: 196px wide, 26px corners, `--os-*` and `--w-*` tokens from `th
 
 ## Releases
 
-Semver, in `package.json` and `zpack.json`. Write plain-language release notes from the actual changes. The pack can also be published to Zebar's marketplace with `zebar publish` (free, needs a glzr.io API token).
+Semver, in `package.json` and `zpack.json`, with an entry in `CHANGELOG.md` and the README's Versioning list. Each GitHub release gets plain-language notes written from the actual changes and a `widgets-pack-<version>.zip` holding `zpack.json`, `dist/`, `docs/assets/`, `README.md`, and `LICENSE`, to unzip into Zebar's folder. The pack can also be published to Zebar's marketplace with `zebar publish` (free, needs a glzr.io API token).
