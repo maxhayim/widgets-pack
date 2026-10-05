@@ -2,6 +2,15 @@
 
 All notable changes to Widgets Pack are documented here.
 
+## [1.3.0] - 2026-10-05
+
+### Added
+- **Colors** in settings, from Braun-palette swatches or any color from the system picker; "default" goes back to the original.
+  - **Calendar:** the accent (month name and today's circle) and the case color. On a custom case, text switches between dark and light to stay readable.
+  - **Clock:** the second hand.
+  - **World Clock:** the second hands.
+  - **Weather:** the accent (temperature bars and locate button).
+
 ## [1.2.0] - 2026-10-05
 
 ### Added

@@ -1,13 +1,15 @@
 import { Cloud, CloudDrizzle, CloudFog, CloudLightning, CloudMoon, CloudRain, CloudSnow, CloudSun, LocateFixed, Moon, Sun } from "lucide-react";
 import { useEffect, useState } from "react";
 import { approximateLocation } from "../../src/shared/desktop.js";
-import { ExternalLink, mountWidget } from "../../src/shared/shell.jsx";
-import { useShared, useStored } from "../../src/shared/store.js";
+import { ColorChoice, ExternalLink, isColor, mountWidget } from "../../src/shared/shell.jsx";
+import { usePrefs, useShared, useStored } from "../../src/shared/store.js";
 
 /* Weather: a Braun-style weather station. Miami until you pick a city; the locate button switches to roughly
    where this computer is. Forecasts and city search come from Open-Meteo. */
 const WEATHER_HOME = { name: "Miami", lat: 25.7617, lon: -80.1918 };
 const WEATHER_REFRESH_MS = 15 * 60 * 1000;
+
+const LOOK_PREFS = { key: "weather-look", defaults: { accent: "" } };
 
 const validPlace = (p) => p && typeof p.name === "string" && Number.isFinite(p.lat) && Number.isFinite(p.lon);
 
@@ -67,6 +69,7 @@ function WeatherWidget() {
   const [stored, setStored] = useStored("weather", { home: WEATHER_HOME, here: null });
   const [shared, setShared] = useShared();
   const [locating, setLocating] = useState(false);
+  const [look] = usePrefs(LOOK_PREFS);
   const home = validPlace(stored.home) ? stored.home : WEATHER_HOME;
   const here = validPlace(stored.here) ? stored.here : null;
   const place = here || home;
@@ -106,7 +109,7 @@ function WeatherWidget() {
   };
 
   return (
-    <section className="widget widget-weather px-3.5 pb-3 pt-3" aria-label="Weather">
+    <section className="widget widget-weather px-3.5 pb-3 pt-3" style={isColor(look.accent) ? { "--os-accent": look.accent } : undefined} aria-label="Weather">
       <div className="flex items-center justify-between gap-2 text-[10px] uppercase tracking-[0.16em] text-[var(--os-ink-3)]">
         <span className="flex min-w-0 items-center gap-1.5">
           <span className={`widget-led ${current ? "widget-led-on" : ""}`} aria-hidden="true" />
@@ -177,6 +180,7 @@ function WeatherSettings() {
   const [shared] = useShared();
   const home = validPlace(stored.home) ? stored.home : WEATHER_HOME;
   const [query, setQuery] = useState("");
+  const [look, setLook] = usePrefs(LOOK_PREFS);
   const [results, setResults] = useState(null); // null | [] | [{ name, detail, lat, lon }] | "error"
 
   const search = async () => {
@@ -203,6 +207,7 @@ function WeatherSettings() {
 
   return (
     <div className="grid gap-1.5">
+      <ColorChoice label="temperature bars" value={look.accent} onChange={(accent) => setLook({ accent })} />
       <span className="wp-field">
         city: <strong className="text-[var(--os-ink)]">{home.name}</strong>
       </span>

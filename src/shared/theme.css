@@ -358,3 +358,8 @@ select {
 }
 
 .wp-flag { font-family: "Twemoji Country Flags", var(--font-sans); }
+
+/* Color swatches in settings */
+.wp-swatch { display: inline-block; width: 16px; height: 16px; flex-shrink: 0; border-radius: 999px; box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--os-ink) 20%, transparent); }
+.wp-swatch-on { box-shadow: 0 0 0 2px var(--os-case), 0 0 0 3.5px var(--os-ink); }
+.wp-swatch-custom { position: relative; background: conic-gradient(#e8591a, #f2b200, #3f7f33, #46687a, #7a5aa6, #c8371a, #e8591a); }

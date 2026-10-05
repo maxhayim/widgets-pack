@@ -85,6 +85,13 @@ To add your own station, open the Radio's settings and enter a name and the stre
 
 In the Clock's settings, give it a name (Home, Office, Mom…) and a country flag. They sit on the face under the 12. Flags show on Windows too, from a bundled font.
 
+### Colors
+
+In settings, pick from Braun-palette swatches or any color:
+- **Calendar:** the month name and today's circle, and the case (text switches between dark and light to stay readable)
+- **Clock** and **World Clock:** the second hand
+- **Weather:** the temperature bars and locate button
+
 ### Stocks
 
 Crypto (BTC, ETH, SOL…) works without a key. For stock prices, get a [free Finnhub key](https://finnhub.io/register) and add it in the Stocks widget's settings.
@@ -130,6 +137,7 @@ Then restart Zebar. Commit `dist/` along with your changes, since Zebar runs the
 
 This project follows semantic versioning.
 
+- **v1.3.0** — choose colors: the Calendar's accent and case, the Clock and World Clock second hands, and the Weather bars
 - **v1.2.0** — add your own radio streams; a name and country flag on the Clock
 - **v1.1.0** — screenshot, release downloads, contributing, code of conduct, and security policy
 - **v1.0.1** — fixes found running inside Zebar: text sizes, drop-downs, and the settings gear

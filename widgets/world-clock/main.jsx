@@ -1,4 +1,4 @@
-import { mountWidget } from "../../src/shared/shell.jsx";
+import { ColorChoice, isColor, mountWidget } from "../../src/shared/shell.jsx";
 import { usePrefs, useShared } from "../../src/shared/store.js";
 import { AnalogClock, TIME_ZONES, formatTime, useClock } from "../../src/shared/time.jsx";
 
@@ -6,7 +6,7 @@ import { AnalogClock, TIME_ZONES, formatTime, useClock } from "../../src/shared/
 const CITIES = TIME_ZONES.filter((z) => z.id !== "auto");
 const WORLD_PREFS = {
   key: "world-clock",
-  defaults: { a: "Asia/Jerusalem", b: "Europe/London", c: "Asia/Tokyo" },
+  defaults: { a: "Asia/Jerusalem", b: "Europe/London", c: "Asia/Tokyo", ticker: "" },
   allowed: Object.fromEntries(["a", "b", "c"].map((k) => [k, CITIES.map((z) => z.id)])),
 };
 const cityName = (zone) => (CITIES.find((z) => z.id === zone)?.label || zone).split(" · ").pop();
@@ -24,7 +24,7 @@ function WorldClockWidget() {
   const [shared] = useShared();
   const zones = [world.a, world.b, world.c];
   return (
-    <section className="widget widget-world px-3 pb-3.5 pt-3" aria-label={`World clock: ${zones.map((z) => `${cityName(z)} ${formatTime(now, shared, z)}`).join(", ")}`}>
+    <section className="widget widget-world px-3 pb-3.5 pt-3" style={isColor(world.ticker) ? { "--os-accent": world.ticker } : undefined} aria-label={`World clock: ${zones.map((z) => `${cityName(z)} ${formatTime(now, shared, z)}`).join(", ")}`}>
       <div className="text-[10px] uppercase tracking-[0.16em] text-[var(--os-ink-3)]">world clock</div>
       <div className="mt-2 grid grid-cols-3 gap-1 text-center">
         {zones.map((zone, i) => (
@@ -44,18 +44,21 @@ function WorldClockWidget() {
 
 function WorldClockSettings() {
   const [world, setWorld] = usePrefs(WORLD_PREFS);
-  return ["a", "b", "c"].map((slot, i) => (
-    <label key={slot} className="wp-field">
-      city {i + 1}
-      <select className="wp-input" value={world[slot]} onChange={(e) => setWorld({ [slot]: e.target.value })}>
-        {CITIES.map((z) => (
-          <option key={z.id} value={z.id}>
-            {z.label}
-          </option>
-        ))}
-      </select>
-    </label>
-  ));
+  return [
+    <ColorChoice key="ticker" label="second hands" value={world.ticker} onChange={(ticker) => setWorld({ ticker })} />,
+    ...["a", "b", "c"].map((slot, i) => (
+      <label key={slot} className="wp-field">
+        city {i + 1}
+        <select className="wp-input" value={world[slot]} onChange={(e) => setWorld({ [slot]: e.target.value })}>
+          {CITIES.map((z) => (
+            <option key={z.id} value={z.id}>
+              {z.label}
+            </option>
+          ))}
+        </select>
+      </label>
+    )),
+  ];
 }
 
 mountWidget({ id: "world-clock", label: "World Clock", Widget: WorldClockWidget, Settings: WorldClockSettings });

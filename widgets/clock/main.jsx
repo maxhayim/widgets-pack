@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { countries, flagEmoji } from "../../src/shared/flags.js";
-import { Choice, mountWidget } from "../../src/shared/shell.jsx";
+import { ACCENTS, Choice, ColorChoice, isColor, mountWidget } from "../../src/shared/shell.jsx";
 import { usePrefs, useShared } from "../../src/shared/store.js";
 import { TIME_ZONES, clockParts, formatTime, useClock } from "../../src/shared/time.jsx";
 
@@ -8,7 +8,7 @@ import { TIME_ZONES, clockParts, formatTime, useClock } from "../../src/shared/t
    An optional name and country flag sit on the face, under the 12. */
 const CLOCK_PREFS = {
   key: "clock",
-  defaults: { timeZone: "auto", seconds: true, name: "", flag: "" },
+  defaults: { timeZone: "auto", seconds: true, name: "", flag: "", ticker: "" },
   allowed: { timeZone: TIME_ZONES.map((z) => z.id) },
 };
 
@@ -25,7 +25,7 @@ function ClockWidget() {
   );
 
   return (
-    <section className="widget widget-clock" aria-label={`${prefs.name || "Clock"}: ${formatTime(now, shared, prefs.timeZone)}`}>
+    <section className="widget widget-clock" style={isColor(prefs.ticker) ? { "--w-yellow": prefs.ticker } : undefined} aria-label={`${prefs.name || "Clock"}: ${formatTime(now, shared, prefs.timeZone)}`}>
       <svg viewBox="0 0 200 200" className="block h-full w-full" aria-hidden="true">
         <circle cx="100" cy="100" r="90" fill="var(--w-face)" />
         {Array.from({ length: 60 }, (_, i) =>
@@ -82,6 +82,12 @@ function ClockSettings() {
           ))}
         </select>
       </label>
+      <ColorChoice
+        label="second hand"
+        value={prefs.ticker}
+        onChange={(ticker) => setPrefs({ ticker })}
+        presets={[["#f2b200", "yellow"], ...ACCENTS.filter(([c]) => c !== "#f2b200")]}
+      />
       <label className="wp-field">
         time zone
         <select className="wp-input" value={prefs.timeZone} onChange={(e) => setPrefs({ timeZone: e.target.value })}>

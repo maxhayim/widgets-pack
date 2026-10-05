@@ -1,9 +1,9 @@
-import { Choice, mountWidget } from "../../src/shared/shell.jsx";
+import { CASES, Choice, ColorChoice, caseStyle, isColor, mountWidget } from "../../src/shared/shell.jsx";
 import { usePrefs, useShared } from "../../src/shared/store.js";
 import { useMinuteClock } from "../../src/shared/time.jsx";
 
 /* Calendar: this month, in your language, starting on your week's first day */
-const CALENDAR_PREFS = { key: "calendar", defaults: { weekStart: "auto" }, allowed: { weekStart: ["auto", "0", "1", "6"] } };
+const CALENDAR_PREFS = { key: "calendar", defaults: { weekStart: "auto", accent: "", case: "" }, allowed: { weekStart: ["auto", "0", "1", "6"] } };
 
 function weekStartsOn(locale) {
   try {
@@ -32,6 +32,7 @@ function CalendarWidget() {
   return (
     <section
       className="widget widget-calendar px-3.5 pb-3.5 pt-3"
+      style={{ ...caseStyle(prefs.case), ...(isColor(prefs.accent) ? { "--os-accent": prefs.accent } : {}) }}
       aria-label={`Calendar: ${now.toLocaleDateString(locale, { weekday: "long", month: "long", day: "numeric", year: "numeric" })}`}
     >
       <div className="flex items-baseline justify-between text-[10px] uppercase tracking-[0.16em]">
@@ -59,17 +60,21 @@ function CalendarWidget() {
 function CalendarSettings() {
   const [prefs, setPrefs] = usePrefs(CALENDAR_PREFS);
   return (
-    <Choice
-      label="week starts on"
-      value={prefs.weekStart}
-      options={[
-        ["auto", "auto"],
-        ["0", "Sun"],
-        ["1", "Mon"],
-        ["6", "Sat"],
-      ]}
-      onChange={(weekStart) => setPrefs({ weekStart })}
-    />
+    <>
+      <ColorChoice label="month and today" value={prefs.accent} onChange={(accent) => setPrefs({ accent })} />
+      <ColorChoice label="case" value={prefs.case} onChange={(c) => setPrefs({ case: c })} presets={CASES} />
+      <Choice
+        label="week starts on"
+        value={prefs.weekStart}
+        options={[
+          ["auto", "auto"],
+          ["0", "Sun"],
+          ["1", "Mon"],
+          ["6", "Sat"],
+        ]}
+        onChange={(weekStart) => setPrefs({ weekStart })}
+      />
+    </>
   );
 }
 
