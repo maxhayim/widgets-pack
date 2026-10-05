@@ -1,4 +1,5 @@
 <p align="center">
+  <img src="docs/assets/logo.png" alt="widgets pack width="200"/>
   <img src="docs/assets/screenshot.png" alt="All thirteen widgets on a desktop" width="760"/>
 </p>
 <p align="center">
