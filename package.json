@@ -1,24 +1,31 @@
 {
   "name": "widgets-pack",
   "private": true,
-  "version": "1.3.0",
+  "version": "1.4.0",
   "type": "module",
+  "exports": {
+    ".": "./lib/index.js",
+    "./widgets.css": "./src/shared/widgets.css"
+  },
   "scripts": {
     "dev": "vite build --watch",
-    "build": "vite build"
+    "build": "vite build && vite build -c vite.lib.config.js"
+  },
+  "peerDependencies": {
+    "react": ">=19"
   },
   "dependencies": {
-    "@tauri-apps/api": "2.0.2",
     "country-flag-emoji-polyfill": "^0.1.10",
-    "lucide-react": "^0.577.0",
-    "react": "^19.2.4",
-    "react-dom": "^19.2.4",
-    "zebar": "^3.3.1"
+    "lucide-react": "^0.577.0"
   },
   "devDependencies": {
+    "@tauri-apps/api": "2.0.2",
     "@tailwindcss/vite": "^4.2.1",
     "@vitejs/plugin-react": "^6.0.0",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4",
     "tailwindcss": "^4.2.1",
-    "vite": "^8.0.0"
+    "vite": "^8.0.0",
+    "zebar": "^3.3.1"
   }
 }

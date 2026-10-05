@@ -20,6 +20,7 @@ This repository contains:
 - **zpack.json** — the Zebar widget pack: all 13 widgets, their window options, default placement, and allowed programs
 - **dist/** — the built widgets Zebar runs (included, so there's nothing to build)
 - **widgets/** and **src/** — the source: React 19 and Tailwind 4, built with Vite
+- **lib/** — the same widgets as a library for web pages (see [docs/GUIDE.md](docs/GUIDE.md#using-the-widgets-on-a-web-page))
 - **docs/** — the developer guide and the screenshot
 
 ---
@@ -112,9 +113,10 @@ Crypto (BTC, ETH, SOL…) works without a key. For stock prices, get a [free Fin
 
 ```
 zpack.json            the 13 widgets for Zebar
-dist/                 the built widgets (committed)
-widgets/<name>/       one widget: index.html + main.jsx
-src/shared/           the frame, settings storage, time helpers, and the look
+dist/                 the built widgets for Zebar (committed)
+lib/                  the widgets as a library for web pages (committed)
+widgets/<name>/       one widget: widget.jsx, plus main.jsx + index.html for Zebar
+src/shared/           the host, the Zebar frame, settings storage, time helpers, and the look
 docs/GUIDE.md         developer guide
 docs/assets/          screenshot
 ```
@@ -130,7 +132,7 @@ npm install
 npm run build     # or: npm run dev, to rebuild on every save
 ```
 
-Then restart Zebar. Commit `dist/` along with your changes, since Zebar runs the built files.
+Then restart Zebar. Commit `dist/` and `lib/` along with your changes, since Zebar and web pages use the built files.
 
 ---
 
@@ -138,6 +140,7 @@ Then restart Zebar. Commit `dist/` along with your changes, since Zebar runs the
 
 This project follows semantic versioning.
 
+- **v1.4.0** — the widgets as a library for web pages; live data and a working radio inside Zebar
 - **v1.3.0** — choose colors: the Calendar's accent and case, the Clock and World Clock second hands, and the Weather bars
 - **v1.2.0** — add your own radio streams; a name and country flag on the Clock
 - **v1.1.0** — screenshot, release downloads, contributing, code of conduct, and security policy

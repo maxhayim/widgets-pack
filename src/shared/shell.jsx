@@ -1,9 +1,14 @@
 import { Settings as Gear } from "lucide-react";
 import { StrictMode, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { createRoot } from "react-dom/client";
-import { moveWindow, openUrl, resizeWindow, restorePosition, savePosition, setLayer, settleWindow, widgetName, windowPosition, zebarWidget } from "./desktop.js";
+import { approximateLocation, moveWindow, openUrl, resizeWindow, restorePosition, savePosition, setLayer, settleWindow, widgetName, windowPosition, zebarWidget } from "./desktop.js";
+import { frameAudio } from "./frame-audio.js";
+import { WidgetHost, browserHost } from "./host.jsx";
 import { LOCALES, useShared, useStored } from "./store.js";
+import { Choice } from "./ui.jsx";
 import "./theme.css";
+
+export * from "./ui.jsx";
 
 /* The frame every widget sits in: drag it anywhere (it snaps to a 16px grid and stays on screen), and the gear
    (on hover) or a right-click turns it around to its settings. The window always fits the widget exactly. */
@@ -16,6 +21,8 @@ function dropZebarNormalize() {
 dropZebarNormalize();
 new MutationObserver(dropZebarNormalize).observe(document.documentElement, { childList: true, subtree: true });
 
+document.documentElement.classList.add("wp-zebar");
+
 // The gear and credits show while the widget is the active window (after a click on it). Hover isn't used:
 // WebKit can report :hover and pointer moves in widget windows the pointer never entered.
 const setActive = (on) => document.documentElement.classList.toggle("wp-active", on);
@@ -23,13 +30,29 @@ setActive(document.hasFocus());
 window.addEventListener("focus", () => setActive(true));
 window.addEventListener("blur", () => setActive(false));
 
+// Zebar: links open in the default browser, "near me" comes from the internet address, audio plays in a frame outside
+// Zebar's cache (a live stream would never start otherwise), and widgets are served from 127.0.0.1:6124.
+// A module constant, so WidgetHost keeps the same host for the whole session.
+const zebarHost = {
+  ...browserHost,
+  openUrl,
+  locate: async () => {
+    const ip = await approximateLocation();
+    return { name: ip.approxCity || "Here", lat: ip.approxLatitude, lon: ip.approxLongitude };
+  },
+  createAudio: frameAudio,
+  origin: "http://127.0.0.1:6124",
+};
+
 // Elements that keep their own clicks instead of starting a drag
 const INTERACTIVE = "button, a, input, select, textarea, label, [contenteditable], [data-nodrag]";
 
 export function mountWidget({ id, label, Widget, Settings }) {
   createRoot(document.getElementById("root")).render(
     <StrictMode>
-      <Frame id={id} label={label} Widget={Widget} Settings={Settings} />
+      <WidgetHost host={zebarHost}>
+        <Frame id={id} label={label} Widget={Widget} Settings={Settings} />
+      </WidgetHost>
     </StrictMode>,
   );
 }
@@ -229,114 +252,4 @@ function SettingsPanel({ name, label, Settings, close }) {
       </div>
     </section>
   );
-}
-
-// A small segmented control
-export function Choice({ label, value, options, onChange }) {
-  return (
-    <div className="wp-field" role="radiogroup" aria-label={label}>
-      {label}
-      <div className="flex gap-1">
-        {options.map(([id, text]) => (
-          <button
-            key={id}
-            type="button"
-            role="radio"
-            aria-checked={value === id}
-            onClick={() => onChange(id)}
-            className={`wp-btn flex-1 px-1 ${value === id ? "wp-btn-main" : ""}`}
-          >
-            {text}
-          </button>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-// Opens in the default browser rather than inside the widget
-export function ExternalLink({ href, className, children, ...rest }) {
-  return (
-    <a
-      href={href}
-      className={className}
-      onClick={(e) => {
-        e.preventDefault();
-        openUrl(href);
-      }}
-      {...rest}
-    >
-      {children}
-    </a>
-  );
-}
-
-/* Colors a widget can be given: Braun-palette swatches, or any color from the system picker. "" means the default. */
-export const isColor = (value) => /^#[0-9a-f]{6}$/i.test(value || "");
-
-export const ACCENTS = [
-  ["#e8591a", "orange"],
-  ["#f2b200", "yellow"],
-  ["#c8371a", "red"],
-  ["#3f7f33", "green"],
-  ["#46687a", "blue"],
-  ["#7a5aa6", "violet"],
-  ["#262624", "black"],
-];
-
-export const CASES = [
-  ["#f3f1ec", "warm white"],
-  ["#201f1d", "graphite"],
-  ["#e8591a", "orange"],
-  ["#f2b200", "yellow"],
-  ["#8a9a6b", "olive"],
-  ["#5d7f93", "blue"],
-  ["#d9d4c7", "stone"],
-];
-
-export function ColorChoice({ label, value, onChange, presets = ACCENTS }) {
-  const current = isColor(value) ? value.toLowerCase() : "";
-  const isCustom = current && !presets.some(([c]) => c === current);
-  return (
-    <div className="wp-field" role="radiogroup" aria-label={label}>
-      {label}
-      <div className="flex flex-wrap items-center gap-1.5">
-        <button type="button" role="radio" aria-checked={!current} onClick={() => onChange("")} className={`wp-btn px-2 py-0.5 ${!current ? "wp-btn-main" : ""}`}>
-          default
-        </button>
-        {presets.map(([color, name]) => (
-          <button
-            key={color}
-            type="button"
-            role="radio"
-            aria-checked={current === color}
-            aria-label={name}
-            title={name}
-            onClick={() => onChange(color)}
-            className={`wp-swatch ${current === color ? "wp-swatch-on" : ""}`}
-            style={{ background: color }}
-          />
-        ))}
-        <label className={`wp-swatch wp-swatch-custom ${isCustom ? "wp-swatch-on" : ""}`} title="Any color" style={isCustom ? { background: current } : undefined}>
-          <input type="color" value={current || "#e8591a"} onChange={(e) => onChange(e.target.value)} className="sr-only" aria-label={`${label}: any color`} />
-        </label>
-      </div>
-    </div>
-  );
-}
-
-// Style for a widget case in any color, with text that stays readable on it
-export function caseStyle(color) {
-  if (!isColor(color)) return undefined;
-  const [r, g, b] = [1, 3, 5].map((i) => parseInt(color.slice(i, i + 2), 16) / 255).map((c) => (c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4));
-  const dark = 0.2126 * r + 0.7152 * g + 0.0722 * b < 0.3;
-  const ink = dark ? "#eeebe4" : "#262624";
-  return {
-    "--w-case": color,
-    "--os-ink": ink,
-    "--os-ink-2": `color-mix(in oklab, ${ink} 80%, ${color})`,
-    "--os-ink-3": `color-mix(in oklab, ${ink} 60%, ${color})`,
-    "--w-line": `color-mix(in oklab, ${ink} 18%, ${color})`,
-    "--os-hover": `color-mix(in oklab, ${ink} 8%, transparent)`,
-  };
 }

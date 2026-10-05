@@ -1,49 +1,41 @@
 import { useEffect, useState } from "react";
+import { useHost } from "./host.jsx";
 
-/* Settings live in the browser storage Zebar gives this pack. Every widget in the pack can read them, so the
-   language, units, and clock style set in one widget apply to all of them. Keys are prefixed in case another
-   pack ever shares the storage. */
-const PREFIX = "widgets-pack:";
+/* Settings are stored through the host (see host.jsx). In Zebar that's the browser storage Zebar gives this pack, so
+   the language, units, and clock style set in one widget apply to all of them. */
 const EVENT = "wp-store";
 
-export function readJSON(key, fallback) {
+const parse = (raw, fallback) => {
+  if (raw === null || raw === undefined) return fallback;
   try {
-    const raw = localStorage.getItem(PREFIX + key);
-    return raw === null ? fallback : JSON.parse(raw);
+    return JSON.parse(raw);
   } catch {
     return fallback;
   }
-}
+};
 
-export function writeJSON(key, value) {
-  try {
-    if (value === undefined || value === null) localStorage.removeItem(PREFIX + key);
-    else localStorage.setItem(PREFIX + key, JSON.stringify(value));
-  } catch {
-    /* storage full or blocked: the setting lasts until the widget closes */
-  }
-  window.dispatchEvent(new CustomEvent(EVENT, { detail: key }));
-}
-
-// A stored value as React state. Follows changes from this widget and from the pack's other widgets.
+// A stored value as React state. Follows changes from this widget, from other widgets on the page, and (through the
+// host's subscribe) from other windows.
 export function useStored(key, fallback) {
-  const [value, setValue] = useState(() => readJSON(key, fallback));
+  const { storage } = useHost();
+  const [value, setValue] = useState(() => parse(storage.get(key), fallback));
   useEffect(() => {
-    const reload = () => setValue(readJSON(key, fallback));
+    const reload = () => setValue(parse(storage.get(key), fallback));
     const onLocal = (e) => e.detail === key && reload();
-    const onOther = (e) => e.key === PREFIX + key && reload();
     window.addEventListener(EVENT, onLocal);
-    window.addEventListener("storage", onOther);
-    window.addEventListener("focus", reload);
+    const unsubscribe = storage.subscribe?.(key, reload);
     return () => {
       window.removeEventListener(EVENT, onLocal);
-      window.removeEventListener("storage", onOther);
-      window.removeEventListener("focus", reload);
+      unsubscribe?.();
     };
-    // fallback is a fresh object each render; the key decides what's read
+    // fallback is a fresh object each render; the key and storage decide what's read
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [key]);
-  const update = (next) => writeJSON(key, typeof next === "function" ? next(readJSON(key, fallback)) : next);
+  }, [key, storage]);
+  const update = (next) => {
+    const value = typeof next === "function" ? next(parse(storage.get(key), fallback)) : next;
+    storage.set(key, value === undefined || value === null ? null : JSON.stringify(value));
+    window.dispatchEvent(new CustomEvent(EVENT, { detail: key }));
+  };
   return [value, update];
 }
 
@@ -53,10 +45,6 @@ export function usePrefs(spec) {
   const prefs = cleanPrefs(spec, saved);
   const update = (patch) => save((current) => ({ ...cleanPrefs(spec, current), ...patch }));
   return [prefs, update];
-}
-
-export function readPrefs(spec) {
-  return cleanPrefs(spec, readJSON(spec.key, {}));
 }
 
 function cleanPrefs({ defaults, allowed = {} }, saved) {
@@ -107,8 +95,15 @@ export const SHARED_PREFS = {
   allowed: { locale: LOCALES.map((l) => l.id), temperature: ["f", "c"], clock: ["12", "24"], theme: ["auto", "light", "dark"] },
 };
 
-// The shared settings, with "match computer" resolved to an actual locale
-export function useShared() {
+function usePackShared() {
   const [shared, setShared] = usePrefs(SHARED_PREFS);
   return [{ ...shared, locale: shared.locale === "auto" ? systemLocale() : shared.locale }, setShared];
+}
+
+// The shared settings: the host's when it has them (a web page's own language and units), otherwise the pack's
+export function useShared() {
+  const host = useHost();
+  // The host's hook never changes while the page is open, so this is always the same hook
+  const useHostShared = host.useShared || usePackShared;
+  return useHostShared();
 }

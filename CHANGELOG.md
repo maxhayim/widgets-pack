@@ -2,6 +2,23 @@
 
 All notable changes to Widgets Pack are documented here.
 
+## [1.4.0] - 2026-10-05
+
+### Added
+- **The widgets as a library for web pages** (`lib/index.js`, plus `widgets-pack/widgets.css`). Install with `npm install github:maxhayim/widgets-pack#v1.4.0`; React 19 is a peer dependency, and nothing from Zebar or Tauri is included.
+- **The host** (`<WidgetHost host={...}>`): storage, links, location, language and units, sound, photos, the clock's mark, and the address MeshMonitor allows all come from where the widgets run. Anything left out uses a plain-browser default. See the guide.
+- **Clock mark:** with no name or flag, the clock shows the host's mark, if it has one.
+
+### Changed
+- Each widget is now `widget.jsx` (the widget) plus a two-line `main.jsx` that starts it in Zebar.
+- Widget styles moved to `src/shared/widgets.css`, plain CSS a web page can import.
+- The radio is one player for the whole page, so it keeps playing when a widget moves.
+- `package.json`: Zebar, Tauri, and react-dom are development-only now.
+
+### Fixed
+- **Live data in Zebar:** Zebar kept every API answer for a week (the `caching` setting), so weather, exchange rates, prices, flights, mesh numbers, and now-playing could be days old. API answers are now kept for 0 seconds; only Google Fonts are kept for a week.
+- **The radio plays in Zebar:** Zebar's cache stores each answer whole before passing it on, so a live stream never started. Audio now plays in a hidden frame outside the cache. Adding your own stations tests them the same way.
+
 ## [1.3.0] - 2026-10-05
 
 ### Added
