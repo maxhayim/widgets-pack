@@ -143,6 +143,7 @@ Then restart Zebar. Commit `dist/` and `lib/` along with your changes, since Zeb
 
 This project follows semantic versioning.
 
+- **v1.4.3** — the logo as the pack's first preview image and each widget's icon
 - **v1.4.2** — Photo Gallery settings; the radio shows when the page's sound is muted
 - **v1.4.1** — radio controls and time zone for web pages
 - **v1.4.0** — the widgets as a library for web pages; live data and a working radio inside Zebar

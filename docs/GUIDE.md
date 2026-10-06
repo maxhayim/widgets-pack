@@ -46,7 +46,7 @@ Stack: React 19, Tailwind 4, lucide-react, built by Vite: `npm run build` makes 
 The pack is also a library. Install it from a release:
 
 ```
-npm install github:maxhayim/widgets-pack#v1.4.2
+npm install github:maxhayim/widgets-pack#v1.4.3
 ```
 
 ```jsx

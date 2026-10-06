@@ -2,6 +2,12 @@
 
 All notable changes to Widgets Pack are documented here.
 
+## [1.4.3] - 2026-10-05
+
+### Added
+- **Pack logo:** first of the pack's preview images in `zpack.json` (shown in Zebar's marketplace), before the screenshot.
+- **Widget icon:** every widget page uses a 256px copy of the logo as its icon (seen when a widget is opened in a browser).
+
 ## [1.4.2] - 2026-10-05
 
 ### Added
