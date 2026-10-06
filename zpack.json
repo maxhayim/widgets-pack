@@ -1,7 +1,7 @@
 {
   "$schema": "https://github.com/glzr-io/zebar/raw/v3.0.0/resources/zpack-schema.json",
   "name": "widgets-pack",
-  "version": "1.4.1",
+  "version": "1.4.2",
   "description": "Thirteen Braun-inspired desktop widgets: clock, weather, radio, calendar, world clock, stocks, sticky notes, convert, calculator, mesh, flight tracker, translator, and photo gallery.",
   "tags": [
     "widgets",

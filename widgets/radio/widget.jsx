@@ -119,6 +119,8 @@ function useNowPlaying(station, active) {
   return active && track?.stationId === station.id ? track.text : null;
 }
 
+const noMute = () => false;
+
 function RadioWidget() {
   const [prefs, setPrefs] = usePrefs(RADIO_PREFS);
   const { stations } = useStations();
@@ -151,14 +153,17 @@ function RadioWidget() {
     };
   });
 
-  const statusLabel = !playing ? "off" : status === "error" ? "no signal" : status === "tuning" ? "tuning…" : "on air";
+  // The host's sound can be muted (its own sound settings): the radio says so and offers to turn it back on
+  const useMuted = sound?.useMuted || noMute;
+  const muted = useMuted();
+  const statusLabel = !playing ? "off" : status === "error" ? "no signal" : status === "tuning" ? "tuning…" : muted ? "muted" : "on air";
 
   return (
     <section className="widget widget-radio" aria-label="Radio">
       <div className="widget-radio-grille" aria-hidden="true" />
       <div className="px-3.5 pt-3">
         <div className="flex items-center gap-1.5 text-[10px] uppercase tracking-[0.16em] text-[var(--os-ink-3)]">
-          <span className={`widget-led ${status === "on" ? "widget-led-on" : ""}`} aria-hidden="true" />
+          <span className={`widget-led ${status === "on" && !muted ? "widget-led-on" : ""}`} aria-hidden="true" />
           <span aria-live="polite">{statusLabel}</span>
           <span className="ml-auto tabular-nums">
             {station + 1}/{n}
@@ -166,7 +171,13 @@ function RadioWidget() {
         </div>
         <div className="mt-1 truncate text-[15px] font-semibold tracking-tight">{current.name}</div>
         <div className="truncate text-[11px] text-[var(--os-ink-3)]" title={track || current.genre}>
-          {track || current.genre}
+          {playing && muted && sound?.unmute ? (
+            <button type="button" className="underline underline-offset-2 hover:text-[var(--os-ink)]" onClick={sound.unmute}>
+              turn sound on
+            </button>
+          ) : (
+            track || current.genre
+          )}
         </div>
       </div>
       <div className="flex items-end justify-between px-3.5 pb-4 pt-2.5">

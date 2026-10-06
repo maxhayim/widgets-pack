@@ -56,8 +56,10 @@ export const browserHost = {
   // A hook returning [{ locale, temperature: "f"|"c", clock: "12"|"24", theme, timeZone? }, update(patch)], or null for the
   // pack's own. timeZone (an IANA zone or "auto") is what the Clock's "automatic" follows.
   useShared: null,
-  // Sound for the radio: { attach(audio), detach(audio), openSettings?() }. With it, the host sets volume and mute and
-  // the radio's volume slider is hidden. null: the radio sets its own volume.
+  // Sound for the radio: { attach(audio), detach(audio), openSettings?(), useMuted?(), unmute?() }. With it, the host sets
+  // volume and mute and the radio's volume slider is hidden. useMuted is a hook (the same function every render): while
+  // it's true and the radio plays, the radio says "muted" and offers "turn sound on", which calls unmute.
+  // null: the radio sets its own volume.
   sound: null,
   // Makes the radio's audio element (anything with src, volume, muted, play(), pause(), load(), removeAttribute("src"),
   // and add/removeEventListener). Zebar plays audio in a frame its cache can't hold up (see frame-audio.js).

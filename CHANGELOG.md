@@ -2,6 +2,12 @@
 
 All notable changes to Widgets Pack are documented here.
 
+## [1.4.2] - 2026-10-05
+
+### Added
+- **Photo Gallery settings:** every photo as a thumbnail you can remove, plus **add…**. Works with the pack's own photos and with a host's `photos`.
+- **Radio "muted" and "turn sound on":** a host's `sound` can offer `useMuted()` (a hook) and `unmute()`. While the radio plays with the page's sound muted, it says **muted**, its light stays off, and a **turn sound on** link calls `unmute()`.
+
 ## [1.4.1] - 2026-10-05
 
 ### Added

@@ -287,4 +287,44 @@ function PhotosWidget() {
   );
 }
 
-export default { id: "photo-gallery", label: "Photo Gallery", Widget: PhotosWidget };
+// Settings: every photo as a thumbnail to remove, and a button to add more
+function PhotosSettings() {
+  const store = useHost().photos || packPhotos;
+  const photos = store.usePhotos();
+  const { busy, pick, input } = useAddPhotos(store);
+  return (
+    <div className="grid gap-2">
+      <span className="wp-field">photos · {photos.length}</span>
+      <div className="grid grid-cols-4 gap-1.5">
+        {photos.map((p) => (
+          <div key={p.id} className="relative">
+            <img src={p.thumb} alt={p.name} title={p.name} className="aspect-square w-full rounded-md object-cover ring-1 ring-[var(--w-line,var(--os-line))]" />
+            <button
+              type="button"
+              onClick={() => store.remove(p.id)}
+              className="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-[var(--os-ink)] text-[var(--os-case)] hover:bg-[var(--os-warn)]"
+              aria-label={`Remove ${p.name}`}
+              title="Remove"
+            >
+              <X className="h-2.5 w-2.5" strokeWidth={3} />
+            </button>
+          </div>
+        ))}
+        <button
+          type="button"
+          disabled={busy}
+          onClick={pick}
+          className="flex aspect-square flex-col items-center justify-center gap-0.5 rounded-md border border-dashed border-[var(--w-line,var(--os-line))] text-[10px] text-[var(--os-ink-2)] hover:bg-[var(--os-hover)]"
+          aria-label="Add photos"
+        >
+          <ImageIcon className="h-3.5 w-3.5" strokeWidth={1.6} aria-hidden="true" />
+          {busy ? "adding…" : "add…"}
+        </button>
+      </div>
+      <p className="text-[10.5px] leading-snug text-[var(--os-ink-3)]">Photos are resized and kept on this computer. Nothing is uploaded.</p>
+      {input}
+    </div>
+  );
+}
+
+export default { id: "photo-gallery", label: "Photo Gallery", Widget: PhotosWidget, Settings: PhotosSettings };
