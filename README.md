@@ -1,6 +1,5 @@
 <p align="center">
   <img src="docs/assets/logo.png" alt="widgets pack" width="200"/>
-  <img src="docs/assets/screenshot.png" alt="All thirteen widgets on a desktop" width="760"/>
 </p>
 <p align="center">
   <a href="https://github.com/glzr-io/zebar">
@@ -15,6 +14,10 @@
 # 🧩 Widgets Pack
 
 Thirteen Braun-inspired desktop widgets for [**Zebar**](https://github.com/glzr-io/zebar), on **Windows, macOS, and Linux**. Warm white plastic in light mode, graphite in dark mode, with an orange accent. See them live on [maxhayim.com](https://maxhayim.com).
+
+<p align="center">
+  <img src="docs/assets/screenshot.png" alt="All thirteen widgets on a desktop" width="760"/>
+</p>
 
 This repository contains:
 - **zpack.json** — the Zebar widget pack: all 13 widgets, their window options, default placement, and allowed programs
